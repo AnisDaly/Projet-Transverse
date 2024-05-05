@@ -1,71 +1,83 @@
 import pygame
-import sys
 
-# Initialisation de Pygame
+wScreen = 1200
+hScreen = 500
+
+# Initialize Pygame
 pygame.init()
 
-# Dimensions de la fenêtre
-WIDTH, HEIGHT = 1024, 640
-SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Déplacer la balle")
+# Initialize Pygame's display module
+win = pygame.display.set_mode((wScreen, hScreen))
+pygame.display.set_caption('Projectile Motion')
 
-# Chargement de l'image de l'arrière-plan
-background_image = pygame.image.load("assets/image/IMG3.jpg").convert()
-
-# Chargement de l'image de la balle
 ball_image = pygame.image.load("assets/image/basket-ball.png").convert_alpha()
+gravity = 0.1
+bounce_stop = 0.2
+retention = 1
 
-# Classe représentant la balle
 class Ball(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = ball_image
-        self.rect = self.image.get_rect(center=(WIDTH // 2, HEIGHT // 2))  # Position initiale au centre
+        self.rect = self.image.get_rect()
+        self.radius = self.image.get_width() // 2
+        self.x = wScreen // 2
+        self.y = hScreen // 2
+        self.vel_x =0
+        # Initial velocity in the x-direction
+        self.vel_y = 0  # Initial velocity in the y-direction
+        self.gravity = 0.5
         self.is_dragging = False  # Pour suivre l'état de glissement
         self.has_been_moved = False  # Pour vérifier si la balle a déjà été déplacée
+        self.pressed = False
 
-    def update(self, event):
-        # Gérer les événements de la souris pour déplacer la balle une seule fois
-        if not self.has_been_moved:
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if self.rect.collidepoint(event.pos):
-                    self.is_dragging = True  # Commence à glisser si on clique sur la balle
-            elif event.type == pygame.MOUSEBUTTONUP:
-                if self.is_dragging:
-                    self.is_dragging = False  # Arrête de glisser quand on relâche le bouton
-                    self.has_been_moved = True  # Marque la balle comme déplacée
-            elif event.type == pygame.MOUSEMOTION and self.is_dragging:
-                self.rect.move_ip(event.rel)  # Déplace la balle avec le mouvement de la souris
+    def update(self):
+        # Update velocity due to gravity
+        self.vel_y += self.gravity
 
-# Création de la balle
+        # Update position
+        self.x += self.vel_x
+        self.y += self.vel_y
+
+        # Update rect position for drawing
+        self.rect.center = (self.x, self.y)
+
+    def draw(self, screen):
+        screen.blit(self.image, self.rect)
+    def check_gravity(self):
+        if self.y < hScreen - self.radius:
+            self.vel_y += gravity
+        else:
+            if self.vel_y > bounce_stop:
+                self.vel_y = self.vel_y * -1 * retention
+            else:
+                if abs(self.vel_y) <= bounce_stop:
+                    self.y_speed = 0
+
+
+
+
+
 ball = Ball()
-
-# Groupe de sprites contenant la balle
 all_sprites = pygame.sprite.Group()
 all_sprites.add(ball)
 
-# Boucle principale du jeu
 running = True
 clock = pygame.time.Clock()
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        else:
-            ball.update(event)  # Met à jour la position de la balle en fonction des événements de la souris
+    ball.check_gravity()
+    # Update
+    all_sprites.update()
 
-    # Dessiner l'arrière-plan
-    SCREEN.blit(background_image, (0, 0))
+    # Draw
+    win.fill((0, 0, 0))  # Clear the screen
+    all_sprites.draw(win)  # Draw all sprites
+    pygame.display.flip()  # Update the display
 
-    # Dessiner la balle
-    all_sprites.draw(SCREEN)
+    clock.tick(60)  # Cap the frame rate at 60 FPS
 
-    # Mise à jour de l'affichage
-    pygame.display.flip()
-
-    # Limite de vitesse de la boucle
-    clock.tick(60)
-
-# Quitter Pygame et fermer la fenêtre
 pygame.quit()
-sys.exit()
+quit()
