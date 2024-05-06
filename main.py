@@ -1,5 +1,5 @@
 import pygame
-
+#simple prototype
 wScreen = 1200
 hScreen = 500
 
@@ -68,9 +68,11 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-    ball.check_gravity()
+        if z
+    if ball.has_been_moved == True:
+        ball.check_gravity()
     # Update
-    all_sprites.update()
+        all_sprites.update()
 
     # Draw
     win.fill((0, 0, 0))  # Clear the screen
