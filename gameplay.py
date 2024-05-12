@@ -136,6 +136,7 @@ def start_game():
         screen.blit(ball_image, ball_rect)
         screen.blit(hoop_image, hoop_rect)
 
+
         for coord in L_aff:
             pygame.draw.circle(screen, (255, 255, 255), coord,5)
         pygame.draw.circle(screen, (255,255,255),(858,210),25)
