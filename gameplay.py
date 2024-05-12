@@ -3,7 +3,7 @@ import math
 def start_game():
     # Initialisation de Pygame
     pygame.init()
-    screen = pygame.display.set_mode((1200, 800))  # Grande fenêtre pour plus d'espace
+    screen = pygame.display.set_mode((1024, 640))  # Grande fenêtre pour plus d'espace
 
     # Chargement et ajustement de la taille de l'image du ballon de basket
     ball_image = pygame.image.load('assets/image/basket-ball.png')
@@ -12,20 +12,20 @@ def start_game():
 
     # Chargement et préparation de l'image d'arrière-plan
     background_image = pygame.image.load("assets/image/IMG3.jpg").convert()
-    background_image = pygame.transform.scale(background_image, (1200, 800))  # Ajustement de la taille pour remplir l'écran
+    background_image = pygame.transform.scale(background_image, (1024, 640))  # Ajustement de la taille pour remplir l'écran
 
     # Chargement de l'image du panier de basketball et ajustement de sa taille
     hoop_image = pygame.image.load('assets/image/panier.png')
     hoop_image = pygame.transform.scale(hoop_image, (120, 100))  # Ajustement de la taille au besoin
     hoop_rect = hoop_image.get_rect()
-    hoop_rect.x = 900  # Positionnement du panier sur le côté droit de l'écran
-    hoop_rect.y = 300  # Positionnement du panier à une hauteur appropriée
+    hoop_rect.x = 800  # Positionnement du panier sur le côté droit de l'écran
+    hoop_rect.y = 180  # Positionnement du panier à une hauteur appropriée
 
     # Couleurs
     BLACK = (0, 0, 0)
 
     # Paramètres initiaux du ballon
-    initial_x = 600  # Position de départ centrée
+    initial_x = 500  # Position de départ centrée
     initial_y = 400
     pos_x = initial_x
     pos_y = initial_y
@@ -98,3 +98,6 @@ def start_game():
         clock.tick(60)
 
     pygame.quit()
+
+if __name__ == "__main__":
+    start_game()
