@@ -1,4 +1,3 @@
-
 import pygame
 import sys
 import gameplay
@@ -145,7 +144,7 @@ def PLAY_GAME(indice, gravite):
     while True:
 
         mouse_pos = pygame.mouse.get_pos()
-
+        gameplay.start_game()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -311,5 +310,4 @@ QUIT_BUTTON = Button(image=pygame.image.load("assets/image/Quit Rect.png"), pos=
                      text_input="QUIT", font=get_font(40), base_color="White", hovering_color="Orange")
 
 main_menu()
-
 
