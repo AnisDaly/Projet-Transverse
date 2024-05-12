@@ -1,5 +1,6 @@
 import pygame
 import sys
+import gameplay as f1
 
 
 class Button():
@@ -61,6 +62,7 @@ def JOUER():
                         indice += 1
 
                 elif JOUER_MAP.checkForInput(mouse_pos):
+                    print("0")
 
                     if indice == 0:
 
@@ -78,7 +80,7 @@ def JOUER():
 
                         PLAY_GAME(3, LISTE_GRAVITES[3])
 
-        BG = pygame.image.load("bckgimg2.jpg")
+        BG = pygame.image.load("assets/image/bckgimg2.jpg")
         SCREEN.blit(BG, (0, 0))
 
         dimension = 60
@@ -152,6 +154,7 @@ def PLAY_GAME(indice, gravite):
 
 
         SCREEN.blit(pygame.image.load(LISTE_MAPS[indice]), (0, 0))
+        f1.start_game()
 
         pygame.display.update()
 

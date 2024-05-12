@@ -1,3 +1,4 @@
+import random
 import pygame
 import math
 def start_game():
@@ -25,8 +26,8 @@ def start_game():
     BLACK = (0, 0, 0)
 
     # Paramètres initiaux du ballon
-    initial_x = 500  # Position de départ centrée
-    initial_y = 400
+    initial_x = random.randint(300,600)  # Position de départ centrée
+    initial_y = random.randint(300,500)
     pos_x = initial_x
     pos_y = initial_y
     speed = 0
@@ -35,12 +36,17 @@ def start_game():
 
     dt = 0.15
 
+    L_points=[]
+    L_aff=[]
+    compteur=0
+
     # Le rebond
     restitution = 0.8  # Bon effet de rebond
 
     # État du ballon
     dragging = False
     launched = False
+    pressed = False
 
     clock = pygame.time.Clock()
     running = True
@@ -53,10 +59,13 @@ def start_game():
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 if ball_rect.collidepoint(mouse_x, mouse_y):
                     dragging = True
+                    pressed = True
                     anchor_x, anchor_y = mouse_x, mouse_y
             elif event.type == pygame.MOUSEBUTTONUP:
                 if dragging:
                     dragging = False
+                    pressed = False
+                    L_aff.clear()
                     launched = True
                     mouse_x, mouse_y = pygame.mouse.get_pos()
                     dx = anchor_x - mouse_x
@@ -64,6 +73,24 @@ def start_game():
                     speed = math.sqrt(dx**2 + dy**2) * 0.4  # Facteur de vitesse augmenté
                     angle = math.degrees(math.atan2(-dy, dx))
                     time = 0
+            elif event.type == pygame.MOUSEMOTION and pressed:
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                dx = anchor_x - mouse_x
+                dy = anchor_y - mouse_y
+                point_x = initial_x
+                point_y = initial_y
+                time = 0
+                dt = 0.50
+                speed = math.sqrt(dx ** 2 + dy ** 2) * 0.4
+                angle = math.degrees(math.atan2(-dy, dx))
+                for i in range(15):
+                    velocity_x = speed * math.cos(math.radians(angle))
+                    velocity_y = speed * math.sin(math.radians(angle)) - gravity * time
+                    point_x += velocity_x * dt
+                    point_y -= velocity_y * dt
+                    time += dt
+                    L_points.append((point_x, point_y))
+                L_aff=list(L_points)
 
         # Dessiner l'image de fond
         screen.blit(background_image, (0, 0))
@@ -82,22 +109,38 @@ def start_game():
                 speed *= restitution
                 time = 0
 
+            if 195 <= pos_y <= 219 and 797 <= pos_x <= 816:
+                dt = -0.15
+
             # Réinitialiser la position si la vitesse devient très faible
-            if speed < 1:
+            if speed < 1 or pos_x >= 940:
+                initial_x = random.randint(300, 600)
+                initial_y = random.randint(300, 500)
                 pos_x = initial_x
                 pos_y = initial_y
                 speed = 0
                 launched = False
+
+            if math.sqrt((858-pos_x)**2+(210-pos_y)**2) <= 40:
+                initial_x = random.randint(300, 600)
+                initial_y = random.randint(300, 500)
+                pos_x = initial_x
+                pos_y = initial_y
+                speed = 0
+                launched = False
+                compteur += 1
+                print(compteur)
 
         # Dessiner le ballon de basket et le panier par-dessus le fond
         ball_rect.center = (int(pos_x), int(pos_y))
         screen.blit(ball_image, ball_rect)
         screen.blit(hoop_image, hoop_rect)
 
+        for coord in L_aff:
+            pygame.draw.circle(screen, (255, 255, 255), coord,5)
+        pygame.draw.circle(screen, (255,255,255),(858,210),25)
+        L_points.clear()
         pygame.display.flip()
         clock.tick(60)
 
     pygame.quit()
-
-if __name__ == "__main__":
-    start_game()
