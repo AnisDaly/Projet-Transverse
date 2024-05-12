@@ -257,18 +257,18 @@ pygame.init()
 
 SCREEN = pygame.display.set_mode((1024, 640))
 pygame.display.set_caption("Menu")
-BG = pygame.image.load("bckgimg2.jpg")
+BG = pygame.image.load("assets/image/bckgimg2.jpg")
 
 
 def get_font(size):
-    return pygame.font.Font("boohong.otf", size)
+    return pygame.font.Font("assets/image/boohong.otf", size)
 
 
-JOUER_RETOUR = Button(image=pygame.image.load("Quit Rect.png"), pos=(902, 590),
+JOUER_RETOUR = Button(image=pygame.image.load("assets/image/Quit Rect.png"), pos=(902, 590),
                       text_input="Retour", font=get_font(45), base_color="White", hovering_color="Orange")
 
-FLECHE_DROITE = pygame.image.load("fleche_droite.png")
-FLECHE_GAUCHE = pygame.image.load("fleche_gauche.png")
+FLECHE_DROITE = pygame.image.load("assets/image/fleche_droite.png")
+FLECHE_GAUCHE = pygame.image.load("assets/image/fleche_gauche.png")
 
 # PAUSE = pygame.image.load("")
 
@@ -288,25 +288,25 @@ LISTE_GRAVITES = [10, 10, 1.62, 20]
 
 jeu_quittable = True
 
-LISTE_MAPS_RESIZED = ["IMG_resized.jpg", "terrain_basket_public_resized.png", "IMG2_resized.jpg", "IMG3_resized.jpg", ]
-LISTE_MAPS = ["IMG.jpg", "terrain_basket_public.png", "IMG2.jpg", "IMG3.jpg"]
-LISTE_FLECHES = ["fleche_droite.png", "fleche_droite.png"]
+LISTE_MAPS_RESIZED = ["assets/image/IMG_resized.jpg", "assets/image/terrain_basket_public_resized.png", "assets/image/IMG2_resized.jpg", "assets/image/IMG3_resized.jpg", ]
+LISTE_MAPS = ["assets/image/IMG.jpg", "assets/image/terrain_basket_public.png", "assets/image/IMG2.jpg", "assets/image/IMG3.jpg"]
+LISTE_FLECHES = ["assets/image/fleche_droite.png", "assets/image/fleche_droite.png"]
 
 AIDE_RETOUR = Button(image=None, pos=(512, 520),
                      text_input="RETOUR", font=get_font(50), base_color="Black", hovering_color="Orange")
 
-JOUER_BUTTON = Button(image=pygame.image.load("Play Rect.png"), pos=(512, 250),
+JOUER_BUTTON = Button(image=pygame.image.load("assets/image/Play Rect.png"), pos=(512, 250),
                       text_input="JOUER", font=get_font(40), base_color="White", hovering_color="Orange")
 
-JOUER_MAP = Button(image=pygame.image.load("Play Rect.png"), pos=(512, 590),
+JOUER_MAP = Button(image=pygame.image.load("assets/image/Play Rect.png"), pos=(512, 590),
                    text_input="JOUER", font=get_font(40), base_color="White", hovering_color="Orange")
 
-AIDE_BUTTON = Button(image=pygame.image.load("Options Rect.png"), pos=(512, 400),
+AIDE_BUTTON = Button(image=pygame.image.load("assets/image/Options Rect.png"), pos=(512, 400),
                      text_input="AIDE", font=get_font(40), base_color="White", hovering_color="Orange")
 
 QUIT_BUTTON_POS = (512, 550)
 
-QUIT_BUTTON = Button(image=pygame.image.load("Quit Rect.png"), pos=QUIT_BUTTON_POS,
+QUIT_BUTTON = Button(image=pygame.image.load("assets/image/Quit Rect.png"), pos=QUIT_BUTTON_POS,
                      text_input="QUIT", font=get_font(40), base_color="White", hovering_color="Orange")
 
 main_menu()
