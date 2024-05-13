@@ -10,7 +10,6 @@ def start_game():
     ball_image = pygame.image.load('assets/image/basket-ball.png')
     ball_image = pygame.transform.scale(ball_image, (60, 60))  # Ajustement de la taille pour s'adapter à l'échelle du jeu
     ball_rect = ball_image.get_rect()
-    radius_ball=45
 
     # Chargement et préparation de l'image d'arrière-plan
     background_image = pygame.image.load("assets/image/IMG3.jpg").convert()
@@ -34,6 +33,7 @@ def start_game():
     speed = 0
     angle = 0
     gravity = 9.8
+    signe=1
 
     dt = 0.15
 
@@ -102,7 +102,7 @@ def start_game():
             # Mise à jour de la position du ballon
             velocity_x = speed * math.cos(math.radians(angle))
             velocity_y = speed * math.sin(math.radians(angle)) - gravity * time
-            pos_x += velocity_x * dt
+            pos_x += signe*velocity_x * dt
             pos_y -= velocity_y * dt
             time += dt
 
@@ -115,14 +115,19 @@ def start_game():
             if 190-10 <= pos_y <= 230+10 and 790-10 <= pos_x <= 820+10:
                 dt = -0.15
 
+            if 904-10 <= pos_x <= 918+10 and 190-10 <= pos_y <= 223+10:
+                signe = (-1)
+
+
             # Réinitialiser la position si la vitesse devient très faible
-            if speed < 1 or pos_x >= 940:
+            if speed < 1 or pos_x >= 1024:
                 initial_x = random.randint(300, 600)
                 initial_y = random.randint(300, 500)
                 pos_x = initial_x
                 pos_y = initial_y
                 speed = 0
                 launched = False
+                signe = 1
 
             if math.sqrt((858-pos_x)**2+(210-pos_y)**2) <= 20:
                 initial_x = random.randint(300, 600)
@@ -131,6 +136,7 @@ def start_game():
                 pos_y = initial_y
                 speed = 0
                 launched = False
+                signe = 1
                 compteur += 1
                 print(compteur)
 
