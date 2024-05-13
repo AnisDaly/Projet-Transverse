@@ -112,7 +112,7 @@ def start_game():
                 speed *= restitution
                 time = 0
 
-            if 190-10 <= pos_y <= 230+10 and 790-10 <= pos_x <= 820+10:
+            if 190-10 <= pos_y <= 230+10 and 790-10 <= pos_x <= 820+20:
                 dt = -0.15
 
             if 904-10 <= pos_x <= 918+10 and 190-10 <= pos_y <= 223+10:
