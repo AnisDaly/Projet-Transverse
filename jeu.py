@@ -1,7 +1,7 @@
 import pygame
 import sys
-import gameplay as f1
-
+import math
+import random
 
 class Button():
     def __init__(self, image, text_input, pos, font, base_color, hovering_color):
@@ -37,7 +37,7 @@ def JOUER():
     global indice
 
     while True:
-
+        
         mouse_pos = pygame.mouse.get_pos()
 
         for event in pygame.event.get():
@@ -62,7 +62,6 @@ def JOUER():
                         indice += 1
 
                 elif JOUER_MAP.checkForInput(mouse_pos):
-                    print("0")
 
                     if indice == 0:
 
@@ -137,28 +136,191 @@ def JOUER():
 
 
 def PLAY_GAME(indice, gravite):
+    global en_jeu
     global score
     global LISTE_GRAVITES
     global LISTE_MAPS
     global LISTE_MAPS_RESIZED
     global LISTE_FLECHES
 
-    while True:
+    background_image = pygame.image.load(LISTE_MAPS[indice])
+    
+    BLACK = (0, 0, 0)
+    
+    dimension = 60
+    hauteur_ecran = 640
+    largeur_ecran = 1024
 
+    initial_x = random.randint(300,600)  # Position de départ centrée
+    initial_y = random.randint(300,500)
+    pos_x = initial_x
+    pos_y = initial_y
+    speed = 0
+    angle = 0
+    gravity = LISTE_GRAVITES[indice]
+
+    dt = 0.15
+
+    L_points=[]
+    L_aff=[]
+    compteur=0
+
+    # Le rebond
+    restitution = 0.8  # Bon effet de rebond
+
+    # État du ballon
+    dragging = False
+    launched = False
+    pressed = False
+
+    clock = pygame.time.Clock()
+
+    while en_jeu:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                if RECT_BALL_IMAGE.collidepoint(mouse_x, mouse_y):
+                    dragging = True
+                    pressed = True
+                    anchor_x, anchor_y = mouse_x, mouse_y
+                elif RECT_PAUSE.collidepoint(mouse_x,mouse_y) :
+                     PAUSE_GAME()
+                    
+            elif event.type == pygame.MOUSEBUTTONUP:
+                if dragging:
+                    dragging = False
+                    pressed = False
+                    L_aff.clear()
+                    launched = True
+                    mouse_x, mouse_y = pygame.mouse.get_pos()
+                    dx = anchor_x - mouse_x
+                    dy = anchor_y - mouse_y
+                    speed = math.sqrt(dx**2 + dy**2) * 0.4  # Facteur de vitesse augmenté
+                    angle = math.degrees(math.atan2(-dy, dx))
+                    time = 0
+            elif event.type == pygame.MOUSEMOTION and pressed:
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                dx = anchor_x - mouse_x
+                dy = anchor_y - mouse_y
+                point_x = initial_x
+                point_y = initial_y
+                time = 0
+                dt = 0.50
+                speed = math.sqrt(dx ** 2 + dy ** 2) * 0.4
+                angle = math.degrees(math.atan2(-dy, dx))
+                for i in range(15):
+                    velocity_x = speed * math.cos(math.radians(angle))
+                    velocity_y = speed * math.sin(math.radians(angle)) - gravity * time
+                    point_x += velocity_x * dt
+                    point_y -= velocity_y * dt
+                    time += dt
+                    L_points.append((point_x, point_y))
+                L_aff=list(L_points)
+        # Dessiner l'image de fond
+        SCREEN.blit(background_image, (0, 0))
+
+        if launched:
+            # Mise à jour de la position du ballon
+            velocity_x = speed * math.cos(math.radians(angle))
+            velocity_y = speed * math.sin(math.radians(angle)) - gravity * time
+            pos_x += velocity_x * dt
+            pos_y -= velocity_y * dt
+            time += dt
+
+            # Gérer les rebonds
+            if pos_y >= SCREEN.get_height() - RECT_BALL_IMAGE.height / 2:
+                pos_y = SCREEN.get_height() - RECT_BALL_IMAGE.height / 2
+                speed *= restitution
+                time = 0
+
+            if 195 <= pos_y <= 219 and 797 <= pos_x <= 816:
+                dt = -0.15
+
+            # Réinitialiser la position si la vitesse devient très faible
+            if speed < 1 or pos_x >= 940:
+                initial_x = random.randint(300, 600)
+                initial_y = random.randint(300, 500)
+                pos_x = initial_x
+                pos_y = initial_y
+                speed = 0
+                launched = False
+
+            if math.sqrt((858-pos_x)**2+(210-pos_y)**2) <= 40:
+                initial_x = random.randint(300, 600)
+                initial_y = random.randint(300, 500)
+                pos_x = initial_x
+                pos_y = initial_y
+                speed = 0
+                launched = False
+                compteur += 1
+                print(compteur)
+
+        # Dessiner le ballon de basket et le panier par-dessus le fond
+        RECT_BALL_IMAGE.center = (int(pos_x), int(pos_y))
+        SCREEN.blit(BALL_IMAGE, RECT_BALL_IMAGE)
+        SCREEN.blit(HOOP_IMAGE, RECT_HOOP)
+        SCREEN.blit(PAUSE,RECT_PAUSE)
+
+
+        for coord in L_aff:
+            pygame.draw.circle(SCREEN, (255, 255, 255), coord,5)
+        pygame.draw.circle(SCREEN, (255,255,255),(858,210),40)
+        L_points.clear()
+        pygame.display.flip()
+        clock.tick(60)
+    
+    
+    
+def PAUSE_GAME():
+    global indice
+    global en_jeu
+    en_jeu = False
+    
+    text_input = "     Appuyez sur Echap pour quitter.\n Appuyez sur Entree pour reprendre."
+    while True :
+        
         mouse_pos = pygame.mouse.get_pos()
-
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.key.key_code("escape"):
+                    en_jeu = True
+                    main_menu()
+                elif event.key == pygame.key.key_code("return"):
+                    en_jeu = True
+                    return
+                    
+                    
+        dimension = 40
+        hauteur_ecran = 640
+        largeur_ecran = 1024
+     
+        SCREEN.blit(pygame.image.load(LISTE_MAPS[indice]),(0,0))
+     
+        pygame.draw.rect(SCREEN, "White", pygame.Rect(300, 200,  420 , 200 ))
+        pygame.draw.rect(SCREEN, "Black", pygame.Rect(300, 200,  420 , 200), 5)
+     
+        PAUSE_TEXT = get_font(30).render("Pause",True,"Orange")
+        PAUSE_RECT = PAUSE_TEXT.get_rect(center=(512, 250))
+        SCREEN.blit(PAUSE_TEXT, PAUSE_RECT)
 
-
-        SCREEN.blit(pygame.image.load(LISTE_MAPS[indice]), (0, 0))
-        f1.start_game()
-
+        
+        lines = text_input.split('\n')
+        y_offset = 300
+        
+        for line in lines:
+            text_render = get_font(15).render(line,True,"Black")
+            text_rect = text_render.get_rect(x=dimension + 300, y = y_offset)
+            SCREEN.blit(text_render,text_rect)
+            y_offset+=20
+    
         pygame.display.update()
-
-
+    
 def AIDE():
 
     global QUIT_BUTTON
@@ -215,12 +377,11 @@ def AIDE():
 
 def main_menu():
     global jeu_quittable
-
     global AIDE_ON
     global QUIT_BUTTON
 
     while True:
-
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT and jeu_quittable:
                 pygame.quit()
@@ -264,7 +425,7 @@ BG = pygame.image.load("assets/image/bckgimg2.jpg")
 
 
 def get_font(size):
-    return pygame.font.Font("assets/image/boohong.otf", size)
+    return pygame.font.Font("boohong.otf", size)
 
 
 JOUER_RETOUR = Button(image=pygame.image.load("assets/image/Quit Rect.png"), pos=(902, 590),
@@ -272,37 +433,46 @@ JOUER_RETOUR = Button(image=pygame.image.load("assets/image/Quit Rect.png"), pos
 
 FLECHE_DROITE = pygame.image.load("assets/image/fleche_droite.png")
 FLECHE_GAUCHE = pygame.image.load("assets/image/fleche_gauche.png")
+BALL_IMAGE = pygame.image.load("assets/image/basket-ball.png")
+HOOP_IMAGE = pygame.image.load("assets/image/panier.png")
 
-# PAUSE = pygame.image.load("")
+PAUSE = pygame.image.load("assets/image/pause_button.png")
 
-
+RECT_PAUSE = PAUSE.get_rect()
 RECT_FLECHE_DROITE = FLECHE_DROITE.get_rect()
 RECT_FLECHE_GAUCHE = FLECHE_GAUCHE.get_rect()
+RECT_BALL_IMAGE = BALL_IMAGE.get_rect()
+RECT_HOOP = HOOP_IMAGE.get_rect()
 
+RECT_PAUSE.x = 15
+RECT_PAUSE.y = 15
 hauteur_fleche = 310
 RECT_FLECHE_DROITE.center = 0, hauteur_fleche
 RECT_FLECHE_GAUCHE.center = 0, hauteur_fleche
 RECT_FLECHE_DROITE.x = 940
 RECT_FLECHE_GAUCHE.x = 10
+RECT_HOOP.x = 800  
+RECT_HOOP.y = 180
 
 indice = 0
 score = 0
 LISTE_GRAVITES = [10, 10, 1.62, 20]
 
 jeu_quittable = True
+en_jeu = True
 
-LISTE_MAPS_RESIZED = ["assets/image/IMG_resized.jpg", "assets/image/terrain_basket_public_resized.png", "assets/image/IMG2_resized.jpg", "assets/image/IMG3_resized.jpg", ]
+LISTE_MAPS_RESIZED = ["assets/image/IMG_resized.jpg", "assets/image/terrain_basket_public_resized.png", "assets/image/IMG2_resized.jpg", "assets/image/IMG3_resized.jpg"]
 LISTE_MAPS = ["assets/image/IMG.jpg", "assets/image/terrain_basket_public.png", "assets/image/IMG2.jpg", "assets/image/IMG3.jpg"]
-LISTE_FLECHES = ["assets/image/fleche_droite.png", "assets/image/fleche_droite.png"]
+LISTE_FLECHES = ["fleche_droite.png", "fleche_droite.png"]
 
 AIDE_RETOUR = Button(image=None, pos=(512, 520),
                      text_input="RETOUR", font=get_font(50), base_color="Black", hovering_color="Orange")
 
 JOUER_BUTTON = Button(image=pygame.image.load("assets/image/Play Rect.png"), pos=(512, 250),
-                      text_input="JOUER", font=get_font(40), base_color="White", hovering_color="Orange")
+                     text_input="JOUER", font=get_font(40), base_color="White", hovering_color="Orange")
 
 JOUER_MAP = Button(image=pygame.image.load("assets/image/Play Rect.png"), pos=(512, 590),
-                   text_input="JOUER", font=get_font(40), base_color="White", hovering_color="Orange")
+                     text_input="JOUER", font=get_font(40), base_color="White", hovering_color="Orange")
 
 AIDE_BUTTON = Button(image=pygame.image.load("assets/image/Options Rect.png"), pos=(512, 400),
                      text_input="AIDE", font=get_font(40), base_color="White", hovering_color="Orange")
@@ -313,5 +483,6 @@ QUIT_BUTTON = Button(image=pygame.image.load("assets/image/Quit Rect.png"), pos=
                      text_input="QUIT", font=get_font(40), base_color="White", hovering_color="Orange")
 
 main_menu()
+
 
 
