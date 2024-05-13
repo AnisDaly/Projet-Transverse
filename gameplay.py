@@ -10,6 +10,7 @@ def start_game():
     ball_image = pygame.image.load('assets/image/basket-ball.png')
     ball_image = pygame.transform.scale(ball_image, (60, 60))  # Ajustement de la taille pour s'adapter à l'échelle du jeu
     ball_rect = ball_image.get_rect()
+    radius_ball=45
 
     # Chargement et préparation de l'image d'arrière-plan
     background_image = pygame.image.load("assets/image/IMG3.jpg").convert()
@@ -36,8 +37,10 @@ def start_game():
 
     dt = 0.15
 
+    # Liste pour la trajectoire en pointillés
     L_points=[]
     L_aff=[]
+    # Nombre de panier
     compteur=0
 
     # Le rebond
@@ -90,7 +93,7 @@ def start_game():
                     point_y -= velocity_y * dt
                     time += dt
                     L_points.append((point_x, point_y))
-                L_aff=list(L_points)
+                L_aff = list(L_points)
 
         # Dessiner l'image de fond
         screen.blit(background_image, (0, 0))
@@ -109,7 +112,7 @@ def start_game():
                 speed *= restitution
                 time = 0
 
-            if 195 <= pos_y <= 219 and 797 <= pos_x <= 816:
+            if 190-10 <= pos_y <= 230+10 and 790-10 <= pos_x <= 820+10:
                 dt = -0.15
 
             # Réinitialiser la position si la vitesse devient très faible
@@ -121,7 +124,7 @@ def start_game():
                 speed = 0
                 launched = False
 
-            if math.sqrt((858-pos_x)**2+(210-pos_y)**2) <= 40:
+            if math.sqrt((858-pos_x)**2+(210-pos_y)**2) <= 20:
                 initial_x = random.randint(300, 600)
                 initial_y = random.randint(300, 500)
                 pos_x = initial_x
@@ -136,11 +139,10 @@ def start_game():
         screen.blit(ball_image, ball_rect)
         screen.blit(hoop_image, hoop_rect)
 
-
         for coord in L_aff:
             pygame.draw.circle(screen, (255, 255, 255), coord,5)
-        pygame.draw.circle(screen, (255,255,255),(858,210),25)
         L_points.clear()
+        #print(pygame.mouse.get_pos())
         pygame.display.flip()
         clock.tick(60)
 
