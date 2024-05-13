@@ -430,7 +430,7 @@ BG = pygame.image.load("assets/image/bckgimg2.jpg")
 
 
 def get_font(size):
-    return pygame.font.Font("boohong.otf", size)
+    return pygame.font.Font("assets/image/boohong.otf", size)
 
 
 JOUER_RETOUR = Button(image=pygame.image.load("assets/image/Quit Rect.png"), pos=(902, 590),
