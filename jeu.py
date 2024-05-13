@@ -158,6 +158,7 @@ def PLAY_GAME(indice, gravite):
     speed = 0
     angle = 0
     gravity = LISTE_GRAVITES[indice]
+    indice = 1
 
     dt = 0.15
 
@@ -235,25 +236,30 @@ def PLAY_GAME(indice, gravite):
                 speed *= restitution
                 time = 0
 
-            if 195 <= pos_y <= 219 and 797 <= pos_x <= 816:
+            if 190-10 <= pos_y <= 230+10 and 790-10 <= pos_x <= 820+20:
                 dt = -0.15
 
-            # Réinitialiser la position si la vitesse devient très faible
-            if speed < 1 or pos_x >= 940:
-                initial_x = random.randint(300, 600)
-                initial_y = random.randint(300, 500)
-                pos_x = initial_x
-                pos_y = initial_y
-                speed = 0
-                launched = False
+            if 904-10 <= pos_x <= 918+10 and 190-10 <= pos_y <= 223+10:
+                signe = (-1)
 
-            if math.sqrt((858-pos_x)**2+(210-pos_y)**2) <= 40:
+            # Réinitialiser la position si la vitesse devient très faible
+            if speed < 1 or pos_x >= 1024:
                 initial_x = random.randint(300, 600)
                 initial_y = random.randint(300, 500)
                 pos_x = initial_x
                 pos_y = initial_y
                 speed = 0
                 launched = False
+                signe = 1
+
+            if math.sqrt((858-pos_x)**2+(210-pos_y)**2) <= 20:
+                initial_x = random.randint(300, 600)
+                initial_y = random.randint(300, 500)
+                pos_x = initial_x
+                pos_y = initial_y
+                speed = 0
+                launched = False
+                signe = 1
                 compteur += 1
                 print(compteur)
 
@@ -266,7 +272,6 @@ def PLAY_GAME(indice, gravite):
 
         for coord in L_aff:
             pygame.draw.circle(SCREEN, (255, 255, 255), coord,5)
-        pygame.draw.circle(SCREEN, (255,255,255),(858,210),40)
         L_points.clear()
         pygame.display.flip()
         clock.tick(60)
