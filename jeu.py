@@ -207,8 +207,78 @@ def PLAY_GAME(indice, gravite):
                     time += dt
                     L_points.append((point_x, point_y))
                 L_aff = list(L_points)
+            if score_p1 >= 15:
+                victoire(1)  # Joueur 1 gagne
+                en_jeu = False
+            elif score_p2 >= 15:
+                victoire(2)  # Joueur 2 gagne
+                en_jeu = False
 
         SCREEN.blit(background_image, (0, 0))
+
+        if launched:
+            velocity_x = speed * math.cos(math.radians(angle))
+            velocity_y = speed * math.sin(math.radians(angle)) - gravity * time
+            pos_x += velocity_x * dt
+            pos_y -= velocity_y * dt
+            time += dt
+
+            if pos_y >= SCREEN.get_height() - RECT_BALL_IMAGE.height / 2:
+                pos_y = SCREEN.get_height() - RECT_BALL_IMAGE.height / 2
+                speed *= restitution
+                time = 0
+
+            if 185 <= pos_y <= 225 and 780 <= pos_x <= 820:
+                dt = -0.15
+
+            if speed < 1 or pos_x >= SCREEN_WIDTH:
+                initial_x = random.randint(300, 600)
+                initial_y = random.randint(300, 500)
+                pos_x, pos_y = initial_x, initial_y
+                speed, launched = 0, False
+                signe = 1
+                # Changer de joueur après chaque tir
+                current_player = 2 if current_player == 1 else 1
+
+            if math.sqrt((848 - pos_x)**2 + (200 - pos_y)**2) <= 20:
+                initial_x = random.randint(300, 600)
+                initial_y = random.randint(300, 500)
+                pos_x, pos_y = initial_x, initial_y
+                speed, launched = 0, False
+                signe, compteur = 1, compteur + 1
+                if current_player == 1:
+                    score_p1 += 2  # Incrémenter le score du joueur 1
+                else:
+                    score_p2 += 2  # Incrémenter le score du joueur 2
+                # Vérifier si un joueur a gagné
+                if score_p1 >= 4:
+                    victoire(1)
+                elif score_p2 >= 4:
+                    victoire(2)
+                # Changer de joueur après chaque tir
+                current_player = 2 if current_player == 1 else 1
+
+        RECT_BALL_IMAGE.center = (int(pos_x), int(pos_y))
+        SCREEN.blit(BALL_IMAGE, RECT_BALL_IMAGE)
+        SCREEN.blit(HOOP_IMAGE, RECT_HOOP)
+        SCREEN.blit(PAUSE, RECT_PAUSE)
+
+        for coord in L_aff:
+            pygame.draw.circle(SCREEN, color[current_player-1], coord, 5)
+
+        # Afficher les scores
+        score_p1_text = get_font(30).render(f"Joueur 1: {score_p1}", True, (255, 255, 255))
+        score_p2_text = get_font(30).render(f"Joueur 2: {score_p2}", True, (255, 255, 255))
+        SCREEN.blit(score_p1_text, (10, 10))
+        SCREEN.blit(score_p2_text, (SCREEN_WIDTH - score_p2_text.get_width() - 10, 10))
+
+        # Afficher le joueur actuel
+        current_player_text = get_font(30).render(f"Tour Joueur {current_player}", True, (255, 255, 255))
+        current_player_rect = current_player_text.get_rect(center=(SCREEN_WIDTH // 2, 30))
+        SCREEN.blit(current_player_text, current_player_rect)
+
+        pygame.display.flip()
+        clock.tick(60)
 
         if launched:
             velocity_x = speed * math.cos(math.radians(angle))
