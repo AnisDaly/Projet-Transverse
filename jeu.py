@@ -174,15 +174,16 @@ def PLAY_GAME(indice, gravite):
             if event.type == pygame.QUIT:
                 pygame.quit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_x, mouse_y = pygame.mouse.get_pos()
-                if RECT_BALL_IMAGE.collidepoint(mouse_x, mouse_y):
-                    dragging, pressed = True, True
-                    anchor_x, anchor_y = mouse_x, mouse_y
-                elif RECT_PAUSE.collidepoint(mouse_x, mouse_y):
-                    PAUSE_GAME()
+                if not launched:
+                    mouse_x, mouse_y = pygame.mouse.get_pos()
+                    if RECT_BALL_IMAGE.collidepoint(mouse_x, mouse_y):
+                        dragging, pressed = True, True
+                        anchor_x, anchor_y = mouse_x, mouse_y
+                    elif RECT_PAUSE.collidepoint(mouse_x, mouse_y):
+                        PAUSE_GAME()
             elif event.type == pygame.MOUSEBUTTONUP and dragging:
                 dragging, pressed, launched = False, False, True
-                L_aff.clear()  # Effacer la liste des points à afficher
+                L_aff.clear()
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 dx, dy = anchor_x - mouse_x, anchor_y - mouse_y
                 speed = math.sqrt(dx**2 + dy**2) * 0.4
@@ -263,7 +264,7 @@ def PLAY_GAME(indice, gravite):
         SCREEN.blit(score_p2_text, (SCREEN_WIDTH - score_p2_text.get_width() - 10, 10))
 
         # Afficher le joueur actuel
-        current_player_text = get_font(30).render(f"Tour Joueur {current_player}", True, (255, 255, 255))
+        current_player_text = get_font(30).render(f"Tour du joueur {current_player}", True, (255, 255, 255))
         current_player_rect = current_player_text.get_rect(center=(SCREEN_WIDTH // 2, 30))
         SCREEN.blit(current_player_text, current_player_rect)
 
