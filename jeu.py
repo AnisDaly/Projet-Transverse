@@ -55,6 +55,13 @@ SCREEN_HEIGHT = 640
 
 def JOUER():
     global indice
+    global score_p1, score_p2
+    global current_player
+    global en_jeu
+
+    score_p1, score_p2 = 0, 0
+    current_player = 1
+    en_jeu = True
 
     while True:
         mouse_pos = pygame.mouse.get_pos()
