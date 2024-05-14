@@ -214,6 +214,12 @@ def PLAY_GAME(indice, gravite):
                     time += dt
                     L_points.append((point_x, point_y))
                 L_aff = list(L_points)
+            if score_p1 >= 15:
+                victoire(1)  # Joueur 1 gagne
+                en_jeu = False
+            elif score_p2 >= 15:
+                victoire(2)  # Joueur 2 gagne
+                en_jeu = False
 
         SCREEN.blit(background_image, (0, 0))
 
@@ -252,9 +258,9 @@ def PLAY_GAME(indice, gravite):
                 else:
                     score_p2 += 2  # Incrémenter le score du joueur 2
                 # Vérifier si un joueur a gagné
-                if score_p1 >= 2:
+                if score_p1 >= 10:
                     victoire(1)
-                elif score_p2 >= 2:
+                elif score_p2 >= 10:
                     victoire(2)
                 # Changer de joueur après chaque tir
                 current_player = 2 if current_player == 1 else 1
@@ -280,6 +286,7 @@ def PLAY_GAME(indice, gravite):
 
         pygame.display.flip()
         clock.tick(60)
+
 
 def victoire(joueur):
     global en_jeu
