@@ -221,11 +221,8 @@ def PLAY_GAME(indice, gravite):
                 speed *= restitution
                 time = 0
 
-            if 180 <= pos_y <= 230 and 780 <= pos_x <= 830:
+            if 185 <= pos_y <= 225 and 780 <= pos_x <= 820:
                 dt = -0.15
-
-            if 894 <= pos_x <= 938 and 180 <= pos_y <= 233:
-                signe = -1
 
             if speed < 1 or pos_x >= SCREEN_WIDTH:
                 initial_x = random.randint(300, 600)
