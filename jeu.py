@@ -175,7 +175,7 @@ def PLAY_GAME(indice, gravite):
             if event.type == pygame.QUIT:
                 pygame.quit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if not launched:
+                if not launched:  # Vérifier si la balle n'est pas en vol
                     mouse_x, mouse_y = pygame.mouse.get_pos()
                     if RECT_BALL_IMAGE.collidepoint(mouse_x, mouse_y):
                         dragging, pressed = True, True
@@ -184,7 +184,7 @@ def PLAY_GAME(indice, gravite):
                         PAUSE_GAME()
             elif event.type == pygame.MOUSEBUTTONUP and dragging:
                 dragging, pressed, launched = False, False, True
-                L_aff.clear()
+                L_aff.clear()  # Effacer la liste des points à afficher
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 dx, dy = anchor_x - mouse_x, anchor_y - mouse_y
                 speed = math.sqrt(dx**2 + dy**2) * 0.4
@@ -245,9 +245,9 @@ def PLAY_GAME(indice, gravite):
                 else:
                     score_p2 += 2  # Incrémenter le score du joueur 2
                 # Vérifier si un joueur a gagné
-                if score_p1 >= 4:
+                if score_p1 >= 2:
                     victoire(1)
-                elif score_p2 >= 4:
+                elif score_p2 >= 2:
                     victoire(2)
                 # Changer de joueur après chaque tir
                 current_player = 2 if current_player == 1 else 1
