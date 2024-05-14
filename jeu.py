@@ -247,6 +247,11 @@ def PLAY_GAME(indice, gravite):
                     score_p1 += 2  # Incrémenter le score du joueur 1
                 else:
                     score_p2 += 2  # Incrémenter le score du joueur 2
+                # Vérifier si un joueur a gagné
+                if score_p1 >= 4:
+                    victoire(1)
+                elif score_p2 >= 4:
+                    victoire(2)
                 # Changer de joueur après chaque tir
                 current_player = 2 if current_player == 1 else 1
 
@@ -265,12 +270,36 @@ def PLAY_GAME(indice, gravite):
         SCREEN.blit(score_p2_text, (SCREEN_WIDTH - score_p2_text.get_width() - 10, 10))
 
         # Afficher le joueur actuel
-        current_player_text = get_font(30).render(f"Tour du joueur {current_player}", True, (255, 255, 255))
+        current_player_text = get_font(30).render(f"Tour Joueur {current_player}", True, (255, 255, 255))
         current_player_rect = current_player_text.get_rect(center=(SCREEN_WIDTH // 2, 30))
         SCREEN.blit(current_player_text, current_player_rect)
 
         pygame.display.flip()
         clock.tick(60)
+
+def victoire(joueur):
+    global en_jeu
+    en_jeu = False
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN or event.key == pygame.K_ESCAPE:
+                    main_menu()
+
+        SCREEN.fill(BLACK)
+        victoire_text = get_font(75).render(f"Joueur {joueur} a gagne!", True, ORANGE)
+        victoire_rect = victoire_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
+        SCREEN.blit(victoire_text, victoire_rect)
+
+        instruction_text = get_font(30).render("Appuyez sur Echap ou Entree pour quitter", True, WHITE)
+        instruction_rect = instruction_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 100))
+        SCREEN.blit(instruction_text, instruction_rect)
+
+        pygame.display.flip()
 
 def PAUSE_GAME():
     global en_jeu
