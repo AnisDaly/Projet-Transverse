@@ -160,6 +160,7 @@ def PLAY_GAME(indice, gravite):
 
     L_points, L_aff = [], []
     compteur = 0
+    color = [(0,0,255),(255,0,0)]
 
     restitution = 0.8
     dragging, launched, pressed = False, False, False
@@ -255,7 +256,7 @@ def PLAY_GAME(indice, gravite):
         SCREEN.blit(PAUSE, RECT_PAUSE)
 
         for coord in L_aff:
-            pygame.draw.circle(SCREEN, (255, 255, 255), coord, 5)
+            pygame.draw.circle(SCREEN, color[current_player-1], coord, 5)
 
         # Afficher les scores
         score_p1_text = get_font(30).render(f"Joueur 1: {score_p1}", True, (255, 255, 255))
