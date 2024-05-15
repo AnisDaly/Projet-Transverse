@@ -71,18 +71,19 @@ def JOUER():
                 pygame.quit()
                 sys.exit()
 
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN :
 
                 if JOUER_RETOUR.checkForInput(mouse_pos):
                     main_menu()
 
-                elif RECT_FLECHE_GAUCHE.collidepoint(mouse_pos):
+                elif RECT_FLECHE_GAUCHE.collidepoint(mouse_pos)  :
                     if indice != 0:
                         indice -= 1
 
-                elif RECT_FLECHE_DROITE.collidepoint(mouse_pos):
+                elif RECT_FLECHE_DROITE.collidepoint(mouse_pos) :
                     if indice != 3:
                         indice += 1
+
 
                 elif JOUER_MAP.checkForInput(mouse_pos):
                     map_select_sound.play()  # Jouer le son de sélection de carte
@@ -215,11 +216,13 @@ def PLAY_GAME(indice, gravite):
                     L_points.append((point_x, point_y))
                 L_aff = list(L_points)
             if score_p1 >= 15:
+                en_jeu = False
                 victoire(1)  # Joueur 1 gagne
-                en_jeu = False
+
             elif score_p2 >= 15:
-                victoire(2)  # Joueur 2 gagne
                 en_jeu = False
+                victoire(2)  # Joueur 2 gagne
+
 
         SCREEN.blit(background_image, (0, 0))
 
@@ -258,9 +261,9 @@ def PLAY_GAME(indice, gravite):
                 else:
                     score_p2 += 2  # Incrémenter le score du joueur 2
                 # Vérifier si un joueur a gagné
-                if score_p1 >= 10:
+                if score_p1 >= 1:
                     victoire(1)
-                elif score_p2 >= 10:
+                elif score_p2 >= 1:
                     victoire(2)
                 # Changer de joueur après chaque tir
                 current_player = 2 if current_player == 1 else 1
@@ -298,17 +301,24 @@ def victoire(joueur):
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN or event.key == pygame.K_ESCAPE:
+                if event.key == pygame.K_RETURN :
+                    JOUER()
+                elif event.key == pygame.K_ESCAPE:
                     main_menu()
 
-        SCREEN.fill(BLACK)
+        SCREEN.blit(pygame.image.load(LISTE_MAPS[indice]), (0, 0))
+
+        SCREEN.blit(pygame.image.load("assets/image/you_won.png"), (265, 150))
         victoire_text = get_font(75).render(f"Joueur {joueur} a gagne!", True, ORANGE)
-        victoire_rect = victoire_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
+        victoire_rect = victoire_text.get_rect(center=(SCREEN_WIDTH // 2,75))
         SCREEN.blit(victoire_text, victoire_rect)
 
-        instruction_text = get_font(30).render("Appuyez sur Echap ou Entree pour quitter", True, WHITE)
-        instruction_rect = instruction_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 100))
+        instruction_text = get_font(30).render("Echap pour quitter ", True, (255, 191, 0))
+        instruction2_text = get_font(30).render("Entree pour rejouer ", True, (255, 191, 0))
+        instruction_rect = instruction_text.get_rect(center=(SCREEN_WIDTH // 2, 130))
+        instruction2_rect = instruction2_text.get_rect(center=(SCREEN_WIDTH // 2, 160))
         SCREEN.blit(instruction_text, instruction_rect)
+        SCREEN.blit(instruction2_text, instruction2_rect)
 
         pygame.display.flip()
 
@@ -334,7 +344,7 @@ def PAUSE_GAME():
         pygame.draw.rect(SCREEN, WHITE, pygame.Rect(300, 200, 420, 200))
         pygame.draw.rect(SCREEN, BLACK, pygame.Rect(300, 200, 420, 200), 5)
 
-        PAUSE_TEXT = get_font(30).render("Pause", True, ORANGE)
+        PAUSE_TEXT = get_font(30).render("Pause", True, "#CC522A")
         PAUSE_RECT = PAUSE_TEXT.get_rect(center=(SCREEN_WIDTH // 2, 250))
         SCREEN.blit(PAUSE_TEXT, PAUSE_RECT)
 
@@ -351,7 +361,7 @@ def PAUSE_GAME():
 def AIDE():
     global jeu_quittable
 
-    text_input = "Le principe du jeu est tres simple : \nchoisis une carte et deviens un vrai \ntireur d'elite ! Saisis la balle par \nun clic gauche, ajuste ta trajectoire \net la force en fonction des pointilles \net vise le panier pour marquer des points ! \nChaque panier marque augmentera\nton score de +2 ou +3 en fonction de s'il a \ntouche ou non l'arceau. \n\nLance toi et deviens un vrai pro du shoot !"
+    text_input = "Le principe du jeu est tres simple : \nchoisis une carte et deviens un vrai \ntireur d'elite ! Saisis la balle par \nun clic gauche, ajuste ta trajectoire \net la force en fonction des pointilles \net vise le panier pour marquer des points ! \nChaque panier marque augmentera\nton score de +2.  \nLance toi et deviens un vrai pro du shoot !"
 
     jeu_quittable = False
 
@@ -367,6 +377,9 @@ def AIDE():
 
         pygame.draw.rect(SCREEN, WHITE, pygame.Rect(60, 60, SCREEN_WIDTH - 120, SCREEN_HEIGHT - 120))
         pygame.draw.rect(SCREEN, BLACK, pygame.Rect(60, 60, SCREEN_WIDTH - 120, SCREEN_HEIGHT - 120), 5)
+
+        menu_help = pygame.image.load("assets/image/help_img.png")
+        SCREEN.blit( menu_help , (500,200) )
 
         AIDE_TEXT = get_font(60).render("Aide", True, ORANGE)
         AIDE_RECT = AIDE_TEXT.get_rect(center=(SCREEN_WIDTH // 2, 120))
@@ -451,7 +464,7 @@ RECT_BALL_IMAGE = BALL_IMAGE.get_rect()
 RECT_HOOP = HOOP_IMAGE.get_rect()
 
 RECT_PAUSE.x = 15
-RECT_PAUSE.y = 15
+RECT_PAUSE.y = 50
 hauteur_fleche = 310
 RECT_FLECHE_DROITE.center = 0, hauteur_fleche
 RECT_FLECHE_GAUCHE.center = 0, hauteur_fleche
