@@ -50,11 +50,76 @@ game_sound.set_volume(0.01)  # Régler le volume
 SCREEN_WIDTH = 1024
 SCREEN_HEIGHT = 640
 
+def demander_nom_joueurs():
+    global nom_joueur_1, nom_joueur_2
+
+    def draw_text_box(active_box):
+        BG = pygame.image.load("assets/image/bckgimg2.jpg")
+        SCREEN.blit(BG, (0, 0))
+
+        # Boîte pour le joueur 1
+        pygame.draw.rect(SCREEN, WHITE, input_box1, 2)
+        text_surface1 = base_font.render(nom_joueur_1, True, WHITE)
+        SCREEN.blit(text_surface1, (input_box1.x + 5, input_box1.y + 5))
+        input_box1.w = max(200, text_surface1.get_width() + 10)
+
+        # Boîte pour le joueur 2
+        pygame.draw.rect(SCREEN, WHITE, input_box2, 2)
+        text_surface2 = base_font.render(nom_joueur_2, True, WHITE)
+        SCREEN.blit(text_surface2, (input_box2.x + 5, input_box2.y + 5))
+        input_box2.w = max(200, text_surface2.get_width() + 10)
+
+        prompt_text1 = base_font.render("Entrez le nom du Joueur 1:", True, WHITE)
+        prompt_text2 = base_font.render("Entrez le nom du Joueur 2:", True, WHITE)
+        SCREEN.blit(prompt_text1, (input_box1.x, input_box1.y - 30))
+        SCREEN.blit(prompt_text2, (input_box2.x, input_box2.y - 30))
+
+        pygame.display.flip()
+
+    base_font = pygame.font.Font(None, 32)
+    input_box1 = pygame.Rect(312, 220, 140, 32)
+    input_box2 = pygame.Rect(312, 320, 140, 32)
+    nom_joueur_1, nom_joueur_2 = '', ''
+    active_box = None
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if input_box1.collidepoint(event.pos):
+                    active_box = 1
+                elif input_box2.collidepoint(event.pos):
+                    active_box = 2
+                else:
+                    active_box = None
+            if event.type == pygame.KEYDOWN:
+                if active_box == 1:
+                    if event.key == pygame.K_RETURN:
+                        active_box = 2
+                    elif event.key == pygame.K_BACKSPACE:
+                        nom_joueur_1 = nom_joueur_1[:-1]
+                    else:
+                        nom_joueur_1 += event.unicode
+                elif active_box == 2:
+                    if event.key == pygame.K_RETURN:
+                        if nom_joueur_1 and nom_joueur_2:
+                            return
+                    elif event.key == pygame.K_BACKSPACE:
+                        nom_joueur_2 = nom_joueur_2[:-1]
+                    else:
+                        nom_joueur_2 += event.unicode
+
+        draw_text_box(active_box)
+
 def JOUER():
     global indice
     global score_p1, score_p2
     global current_player
     global en_jeu
+
+    demander_nom_joueurs()
 
     score_p1, score_p2 = 0, 0
     current_player = 1
@@ -146,6 +211,7 @@ def PLAY_GAME(indice, gravite):
     global en_jeu
     global score_p1, score_p2
     global current_player
+    global nom_joueur_1, nom_joueur_2
 
     # Déclarer les scores comme globales
     score_p1, score_p2 = 0, 0
@@ -284,13 +350,13 @@ def PLAY_GAME(indice, gravite):
             pygame.draw.circle(SCREEN, color[current_player-1], coord, 5)
 
         # Afficher les scores
-        score_p1_text = get_font(30).render(f"Joueur 1: {score_p1}", True, (255, 255, 255))
-        score_p2_text = get_font(30).render(f"Joueur 2: {score_p2}", True, (255, 255, 255))
+        score_p1_text = get_font(30).render(f"{nom_joueur_1}: {score_p1}", True, (255, 255, 255))
+        score_p2_text = get_font(30).render(f"{nom_joueur_2}: {score_p2}", True, (255, 255, 255))
         SCREEN.blit(score_p1_text, (10, 10))
         SCREEN.blit(score_p2_text, (SCREEN_WIDTH - score_p2_text.get_width() - 10, 10))
 
         # Afficher le joueur actuel
-        current_player_text = get_font(30).render(f"Tour Joueur {current_player}", True, (255, 255, 255))
+        current_player_text = get_font(30).render(f"Tour de {nom_joueur_1 if current_player == 1 else nom_joueur_2}", True, (255, 255, 255))
         current_player_rect = current_player_text.get_rect(center=(SCREEN_WIDTH // 2, 30))
         SCREEN.blit(current_player_text, current_player_rect)
 
@@ -323,7 +389,7 @@ def victoire(joueur):
         SCREEN.blit(pygame.image.load(LISTE_MAPS[indice]), (0, 0))
 
         SCREEN.blit(pygame.image.load("assets/image/you_won.png"), (265, 150))
-        victoire_text = get_font(75).render(f"Joueur {joueur} a gagne!", True, ORANGE)
+        victoire_text = get_font(75).render(f"{nom_joueur_1 if joueur == 1 else nom_joueur_2} a gagne!", True, ORANGE)
         victoire_rect = victoire_text.get_rect(center=(SCREEN_WIDTH // 2,75))
         SCREEN.blit(victoire_text, victoire_rect)
 
