@@ -40,14 +40,11 @@ pygame.mixer.init()  # Initialiser le module de mixage
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 ORANGE = (255, 165, 0)
+GOLD = (255, 215, 0)
 
-# Charger les effets sonores
-map_select_sound = pygame.mixer.Sound("sons/science-documentary-169621.mp3")
-map_select_sound.set_volume(0.01)  # Régler le volume à 50%
-
-# Charger la musique de fond (à jouer pendant le jeu)
-game_music = pygame.mixer.Sound("sons/science-documentary-169621.mp3")
-game_music.set_volume(0.01)  # Régler le volume à 50%
+# Charger le son unique
+game_sound = pygame.mixer.Sound("sons/anime-108841.mp3")
+game_sound.set_volume(0.01)  # Régler le volume
 
 # Dimensions de l'écran
 SCREEN_WIDTH = 1024
@@ -62,6 +59,8 @@ def JOUER():
     score_p1, score_p2 = 0, 0
     current_player = 1
     en_jeu = True
+
+    game_sound.play(-1)  # Jouer le son
 
     while True:
         mouse_pos = pygame.mouse.get_pos()
@@ -86,7 +85,6 @@ def JOUER():
 
 
                 elif JOUER_MAP.checkForInput(mouse_pos):
-                    map_select_sound.play()  # Jouer le son de sélection de carte
                     if indice == 0:
                         PLAY_GAME(0, LISTE_GRAVITES[0])
                     elif indice == 1:
@@ -168,15 +166,17 @@ def PLAY_GAME(indice, gravite):
 
     L_points, L_aff = [], []
     compteur = 0
-    color = [(0,0,255),(255,0,0)]
+    color = [(0, 0, 255), (255, 0, 0)]
 
     restitution = 0.8
     dragging, launched, pressed = False, False, False
 
     clock = pygame.time.Clock()
 
-    # Jouer la musique de jeu lorsque le jeu commence
-    game_music.play(-1)
+    # Variables pour l'animation du "+2"
+    show_plus_two = False
+    plus_two_timer = 0
+    plus_two_pos = (0, 0)
 
     while en_jeu:
         for event in pygame.event.get():
@@ -215,6 +215,7 @@ def PLAY_GAME(indice, gravite):
                     time += dt
                     L_points.append((point_x, point_y))
                 L_aff = list(L_points)
+
             if score_p1 >= 15:
                 en_jeu = False
                 victoire(1)  # Joueur 1 gagne
@@ -258,8 +259,14 @@ def PLAY_GAME(indice, gravite):
                 signe, compteur = 1, compteur + 1
                 if current_player == 1:
                     score_p1 += 2  # Incrémenter le score du joueur 1
+                    plus_two_pos = (10 + score_p1_text.get_width() + 20, 10)  # Positionner le "+2" à côté du score du joueur 1
                 else:
                     score_p2 += 2  # Incrémenter le score du joueur 2
+                    plus_two_pos = (SCREEN_WIDTH - score_p2_text.get_width() - 60, 10)  # Positionner le "+2" à côté du score du joueur 2
+                # Déclencher l'animation du "+2"
+                show_plus_two = True
+                plus_two_timer = pygame.time.get_ticks()
+
                 # Vérifier si un joueur a gagné
                 if score_p1 >= 1:
                     victoire(1)
@@ -286,6 +293,13 @@ def PLAY_GAME(indice, gravite):
         current_player_text = get_font(30).render(f"Tour Joueur {current_player}", True, (255, 255, 255))
         current_player_rect = current_player_text.get_rect(center=(SCREEN_WIDTH // 2, 30))
         SCREEN.blit(current_player_text, current_player_rect)
+
+        # Afficher l'animation "+2"
+        if show_plus_two:
+            plus_two_text = get_font(30).render("+2", True, GOLD)
+            SCREEN.blit(plus_two_text, plus_two_pos)
+            if pygame.time.get_ticks() - plus_two_timer > 1000:  # Afficher pendant 1 seconde
+                show_plus_two = False
 
         pygame.display.flip()
         clock.tick(60)
@@ -402,8 +416,7 @@ def main_menu():
     global jeu_quittable
 
     # Arrêter la musique de jeu si elle est en cours
-    game_music.stop()
-    map_select_sound.stop()  # Arrêter également le son de sélection de carte
+    game_sound.stop()
 
     while True:
         for event in pygame.event.get():
@@ -429,6 +442,7 @@ def main_menu():
 
         if pygame.mouse.get_pressed()[0]:
             if JOUER_BUTTON.checkForInput(MENU_MOUSE_POS):
+                game_sound.play(-1)  # Jouer le son
                 JOUER()
             if AIDE_BUTTON.checkForInput(MENU_MOUSE_POS):
                 AIDE()
