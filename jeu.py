@@ -268,9 +268,9 @@ def PLAY_GAME(indice, gravite):
                 plus_two_timer = pygame.time.get_ticks()
 
                 # Vérifier si un joueur a gagné
-                if score_p1 >= 1:
+                if score_p1 >= 10:
                     victoire(1)
-                elif score_p2 >= 1:
+                elif score_p2 >= 10:
                     victoire(2)
                 # Changer de joueur après chaque tir
                 current_player = 2 if current_player == 1 else 1
