@@ -1,9 +1,13 @@
+# Nous nous sommes inspirés d'une classe Button décrite sur une vidéo Youtube
+
 import pygame
 import sys
 import math
 import random
 
 class Button():
+
+    # Nous nous sommes inspirés d'une classe Button présentée sur une vidéo Youtube
     def __init__(self, image, text_input, pos, font, base_color, hovering_color):
         self.font = font
         self.image = image
