@@ -5,9 +5,11 @@ import sys
 import math
 import random
 
-class Button():
 
-    # Nous nous sommes inspirés d'une classe Button présentée sur une vidéo Youtube
+# Nous nous sommes inspirés d'une classe Button présentée sur une vidéo Youtube
+# Classe Button pour créer et gérer des boutons interactifs
+class Button():
+    # Initialisation de la classe Button avec les paramètres nécessaires
     def __init__(self, image, text_input, pos, font, base_color, hovering_color):
         self.font = font
         self.image = image
@@ -22,14 +24,17 @@ class Button():
         self.rect = self.image.get_rect(center=(self.x_pos, self.y_pos))
         self.text_rect = self.text.get_rect(center=(self.x_pos, self.y_pos))
 
+    # Mise à jour de l'affichage du bouton
     def update(self, screen):
         if self.image is not None:
             screen.blit(self.image, self.rect)
         screen.blit(self.text, self.text_rect)
 
+    # Vérification de l'entrée utilisateur (souris)
     def checkForInput(self, position):
         return self.rect.collidepoint(position)
 
+    # Changement de couleur du texte en fonction de la position de la souris
     def changeColor(self, position):
         if self.rect.collidepoint(position):
             self.text = self.font.render(self.text_input, True, self.hovering_color)
@@ -48,38 +53,40 @@ GOLD = (255, 215, 0)
 
 # Charger le son unique
 game_sound = pygame.mixer.Sound("sons/anime-108841.mp3")
-game_sound.set_volume(0.1)  # Régler le volume
+game_sound.set_volume(0.05)  # Régler le volume
 
 # Dimensions de l'écran
 SCREEN_WIDTH = 1024
 SCREEN_HEIGHT = 640
 
+# Fonction pour demander les noms des joueurs
 def demander_nom_joueurs():
     global nom_joueur_1, nom_joueur_2
 
-
-
+    # Fonction pour dessiner les boîtes de texte
     def draw_text_box(active_box):
         BG = pygame.image.load("assets/image/bckgimg2.jpg")
         SCREEN.blit(BG, (0, 0))
 
         # Boîte pour le joueur 1
-        pygame.draw.rect(SCREEN, WHITE, input_box1, 2)
-        text_surface1 = base_font.render(nom_joueur_1, True, WHITE)
+        pygame.draw.rect(SCREEN, BLACK, input_box1, 2)  # Bordure noire
+        text_surface1 = base_font.render(nom_joueur_1, True, BLACK)  # Texte noir
         SCREEN.blit(text_surface1, (input_box1.x + 5, input_box1.y + 5))
         input_box1.w = max(200, text_surface1.get_width() + 10)
 
         # Boîte pour le joueur 2
-        pygame.draw.rect(SCREEN, WHITE, input_box2, 2)
-        text_surface2 = base_font.render(nom_joueur_2, True, WHITE)
+        pygame.draw.rect(SCREEN, BLACK, input_box2, 2)  # Bordure noire
+        text_surface2 = base_font.render(nom_joueur_2, True, BLACK)  # Texte noir
         SCREEN.blit(text_surface2, (input_box2.x + 5, input_box2.y + 5))
         input_box2.w = max(200, text_surface2.get_width() + 10)
 
-        prompt_text1 = get_font(25).render("Entrez le nom du Joueur 1:", True, WHITE)
-        prompt_text2 = get_font(25).render("Entrez le nom du Joueur 2:", True, WHITE)
-        SCREEN.blit(prompt_text1, (input_box1.x-85, input_box1.y - 30))
-        SCREEN.blit(prompt_text2, (input_box2.x-85, input_box2.y - 30))
+        # Instructions pour les joueurs
+        prompt_text1 = get_font(25).render("Entrez le nom du Joueur 1:", True, BLACK)  # Texte noir
+        prompt_text2 = get_font(25).render("Entrez le nom du Joueur 2:", True, BLACK)  # Texte noir
+        SCREEN.blit(prompt_text1, (input_box1.x - 85, input_box1.y - 30))
+        SCREEN.blit(prompt_text2, (input_box2.x - 85, input_box2.y - 30))
 
+        # Afficher le titre du jeu
         MENU_TEXT = get_font(75).render("Basket Sniper", True, "Orange")
         MENU_RECT = MENU_TEXT.get_rect(center=(512, 100))
         SCREEN.blit(MENU_TEXT, MENU_RECT)
@@ -92,8 +99,7 @@ def demander_nom_joueurs():
     nom_joueur_1, nom_joueur_2 = '', ''
     active_box = None
 
-
-
+    # Boucle principale pour l'entrée des noms des joueurs
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -124,8 +130,7 @@ def demander_nom_joueurs():
                         nom_joueur_2 += event.unicode
         draw_text_box(active_box)
 
-
-
+# Fonction principale pour le jeu
 def JOUER():
     global indice
     global score_p1, score_p2
@@ -138,7 +143,6 @@ def JOUER():
     current_player = 1
     en_jeu = True
 
-    game_sound.play(-1)  # Jouer le son
 
     while True:
         mouse_pos = pygame.mouse.get_pos()
@@ -148,20 +152,15 @@ def JOUER():
                 pygame.quit()
                 sys.exit()
 
-            elif event.type == pygame.MOUSEBUTTONDOWN :
-
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 if JOUER_RETOUR.checkForInput(mouse_pos):
                     main_menu()
-
-                elif RECT_FLECHE_GAUCHE.collidepoint(mouse_pos)  :
+                elif RECT_FLECHE_GAUCHE.collidepoint(mouse_pos):
                     if indice != 0:
                         indice -= 1
-
-                elif RECT_FLECHE_DROITE.collidepoint(mouse_pos) :
+                elif RECT_FLECHE_DROITE.collidepoint(mouse_pos):
                     if indice != 3:
                         indice += 1
-
-
                 elif JOUER_MAP.checkForInput(mouse_pos):
                     if indice == 0:
                         PLAY_GAME(0, LISTE_GRAVITES[0])
@@ -220,6 +219,7 @@ def JOUER():
 
         pygame.display.update()
 
+# Fonction pour jouer une partie
 def PLAY_GAME(indice, gravite):
     global en_jeu
     global score_p1, score_p2
@@ -383,7 +383,7 @@ def PLAY_GAME(indice, gravite):
         pygame.display.flip()
         clock.tick(60)
 
-
+# Fonction pour gérer la victoire
 def victoire(joueur):
     global en_jeu
     en_jeu = False
@@ -394,7 +394,7 @@ def victoire(joueur):
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN :
+                if event.key == pygame.K_RETURN:
                     JOUER()
                 elif event.key == pygame.K_ESCAPE:
                     main_menu()
@@ -403,7 +403,7 @@ def victoire(joueur):
 
         SCREEN.blit(pygame.image.load("assets/image/you_won.png"), (265, 150))
         victoire_text = get_font(75).render(f"{nom_joueur_1 if joueur == 1 else nom_joueur_2} a gagne!", True, ORANGE)
-        victoire_rect = victoire_text.get_rect(center=(SCREEN_WIDTH // 2,75))
+        victoire_rect = victoire_text.get_rect(center=(SCREEN_WIDTH // 2, 75))
         SCREEN.blit(victoire_text, victoire_rect)
 
         instruction_text = get_font(30).render("Echap pour quitter ", True, (255, 191, 0))
@@ -415,6 +415,7 @@ def victoire(joueur):
 
         pygame.display.flip()
 
+# Fonction pour mettre le jeu en pause
 def PAUSE_GAME():
     global en_jeu
     en_jeu = False
@@ -451,6 +452,7 @@ def PAUSE_GAME():
 
         pygame.display.update()
 
+# Fonction pour afficher l'aide
 def AIDE():
     global jeu_quittable
 
@@ -472,7 +474,7 @@ def AIDE():
         pygame.draw.rect(SCREEN, BLACK, pygame.Rect(60, 60, SCREEN_WIDTH - 120, SCREEN_HEIGHT - 120), 5)
 
         menu_help = pygame.image.load("assets/image/help_img.png")
-        SCREEN.blit( menu_help , (500,200) )
+        SCREEN.blit(menu_help, (500, 200))
 
         AIDE_TEXT = get_font(60).render("Aide", True, ORANGE)
         AIDE_RECT = AIDE_TEXT.get_rect(center=(SCREEN_WIDTH // 2, 120))
@@ -491,11 +493,11 @@ def AIDE():
 
         pygame.display.update()
 
+# Fonction pour afficher le menu principal
 def main_menu():
     global jeu_quittable
 
-    # Arrêter la musique de jeu si elle est en cours
-    game_sound.stop()
+    game_sound.play(-1)  # Jouer le son en boucle
 
     while True:
         for event in pygame.event.get():
@@ -521,7 +523,6 @@ def main_menu():
 
         if pygame.mouse.get_pressed()[0]:
             if JOUER_BUTTON.checkForInput(MENU_MOUSE_POS):
-                game_sound.play(-1)  # Jouer le son
                 JOUER()
             if AIDE_BUTTON.checkForInput(MENU_MOUSE_POS):
                 AIDE()
@@ -538,9 +539,11 @@ SCREEN = pygame.display.set_mode((1024, 640))
 pygame.display.set_caption("Menu")
 BG = pygame.image.load("assets/image/bckgimg2.jpg")
 
+# Fonction pour obtenir une police de caractère
 def get_font(size):
     return pygame.font.Font("assets/image/boohong.otf", size)
 
+# Initialisation des boutons
 JOUER_RETOUR = Button(image=pygame.image.load("assets/image/Quit Rect.png"), pos=(902, 590),
                       text_input="Retour", font=get_font(45), base_color="White", hovering_color="Orange")
 
@@ -594,4 +597,5 @@ QUIT_BUTTON_POS = (512, 550)
 QUIT_BUTTON = Button(image=pygame.image.load("assets/image/Quit Rect.png"), pos=QUIT_BUTTON_POS,
                      text_input="QUIT", font=get_font(40), base_color="White", hovering_color="Orange")
 
+# Démarrer le menu principal
 main_menu()
