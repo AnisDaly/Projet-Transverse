@@ -44,7 +44,7 @@ GOLD = (255, 215, 0)
 
 # Charger le son unique
 game_sound = pygame.mixer.Sound("sons/anime-108841.mp3")
-game_sound.set_volume(0.01)  # Régler le volume
+game_sound.set_volume(0.1)  # Régler le volume
 
 # Dimensions de l'écran
 SCREEN_WIDTH = 1024
@@ -52,6 +52,8 @@ SCREEN_HEIGHT = 640
 
 def demander_nom_joueurs():
     global nom_joueur_1, nom_joueur_2
+
+
 
     def draw_text_box(active_box):
         BG = pygame.image.load("assets/image/bckgimg2.jpg")
@@ -69,18 +71,24 @@ def demander_nom_joueurs():
         SCREEN.blit(text_surface2, (input_box2.x + 5, input_box2.y + 5))
         input_box2.w = max(200, text_surface2.get_width() + 10)
 
-        prompt_text1 = base_font.render("Entrez le nom du Joueur 1:", True, WHITE)
-        prompt_text2 = base_font.render("Entrez le nom du Joueur 2:", True, WHITE)
-        SCREEN.blit(prompt_text1, (input_box1.x, input_box1.y - 30))
-        SCREEN.blit(prompt_text2, (input_box2.x, input_box2.y - 30))
+        prompt_text1 = get_font(25).render("Entrez le nom du Joueur 1:", True, WHITE)
+        prompt_text2 = get_font(25).render("Entrez le nom du Joueur 2:", True, WHITE)
+        SCREEN.blit(prompt_text1, (input_box1.x-85, input_box1.y - 30))
+        SCREEN.blit(prompt_text2, (input_box2.x-85, input_box2.y - 30))
+
+        MENU_TEXT = get_font(75).render("Basket Sniper", True, "Orange")
+        MENU_RECT = MENU_TEXT.get_rect(center=(512, 100))
+        SCREEN.blit(MENU_TEXT, MENU_RECT)
 
         pygame.display.flip()
 
     base_font = pygame.font.Font(None, 32)
-    input_box1 = pygame.Rect(312, 220, 140, 32)
-    input_box2 = pygame.Rect(312, 320, 140, 32)
+    input_box1 = pygame.Rect(420, 220, 140, 32)
+    input_box2 = pygame.Rect(420, 320, 140, 32)
     nom_joueur_1, nom_joueur_2 = '', ''
     active_box = None
+
+
 
     while True:
         for event in pygame.event.get():
@@ -110,8 +118,9 @@ def demander_nom_joueurs():
                         nom_joueur_2 = nom_joueur_2[:-1]
                     else:
                         nom_joueur_2 += event.unicode
-
         draw_text_box(active_box)
+
+
 
 def JOUER():
     global indice
