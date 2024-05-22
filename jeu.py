@@ -64,7 +64,7 @@ def demander_nom_joueurs():
     global nom_joueur_1, nom_joueur_2
 
     # Fonction pour dessiner les boîtes de texte
-    def draw_text_box(active_box):
+    def dessiner_cases(active_box):
         BG = pygame.image.load("assets/image/bckgimg2.jpg")
         SCREEN.blit(BG, (0, 0))
 
@@ -128,7 +128,7 @@ def demander_nom_joueurs():
                         nom_joueur_2 = nom_joueur_2[:-1]
                     else:
                         nom_joueur_2 += event.unicode
-        draw_text_box(active_box)
+        dessiner_cases(active_box)
 
 # Fonction principale pour le jeu
 def JOUER():
