@@ -163,13 +163,13 @@ def JOUER():
                         indice += 1
                 elif JOUER_MAP.checkForInput(mouse_pos):
                     if indice == 0:
-                        PLAY_GAME(0, LISTE_GRAVITES[0])
+                        PLAY_GAME(0)
                     elif indice == 1:
-                        PLAY_GAME(1, LISTE_GRAVITES[1])
+                        PLAY_GAME(1)
                     elif indice == 2:
-                        PLAY_GAME(2, LISTE_GRAVITES[2])
+                        PLAY_GAME(2)
                     else:
-                        PLAY_GAME(3, LISTE_GRAVITES[3])
+                        PLAY_GAME(3)
 
         BG = pygame.image.load("assets/image/bckgimg2.jpg")
         SCREEN.blit(BG, (0, 0))
@@ -220,7 +220,7 @@ def JOUER():
         pygame.display.update()
 
 # Fonction pour jouer une partie
-def PLAY_GAME(indice, gravite):
+def PLAY_GAME(indice):
     global en_jeu
     global score_p1, score_p2
     global current_player
@@ -231,10 +231,6 @@ def PLAY_GAME(indice, gravite):
     current_player = 1  # Initialiser le joueur 1
 
     background_image = pygame.image.load(LISTE_MAPS[indice])
-    BLACK = (0, 0, 0)
-    dimension = 60
-    hauteur_ecran = 640
-    largeur_ecran = 1024
 
     initial_x = random.randint(300, 600)
     initial_y = random.randint(300, 500)
@@ -242,6 +238,8 @@ def PLAY_GAME(indice, gravite):
     speed, angle, gravity = 0, 0, LISTE_GRAVITES[indice]
     dt = 0.15
     time = 0
+    Facteur_vitesse = [1,1,1,1.2] #Liste permetttant de ralentir la vitesse sur Jupiter à cause de la forte gravité
+    Nb_points_trajectoire_map = [14,14,15,12] #Liste donnant le nombre de points de la trajectoire affichés sur la mao
 
     L_points, L_aff = [], []
     compteur = 0
@@ -274,7 +272,7 @@ def PLAY_GAME(indice, gravite):
                 L_aff.clear()  # Effacer la liste des points à afficher
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 dx, dy = anchor_x - mouse_x, anchor_y - mouse_y
-                speed = math.sqrt(dx**2 + dy**2) * 0.4
+                speed = math.sqrt(dx**2 + dy**2) * 0.4 * Facteur_vitesse[indice]
                 angle = math.degrees(math.atan2(-dy, dx))
                 time = 0
             elif event.type == pygame.MOUSEMOTION and pressed:
@@ -282,11 +280,11 @@ def PLAY_GAME(indice, gravite):
                 dx, dy = anchor_x - mouse_x, anchor_y - mouse_y
                 point_x, point_y = initial_x, initial_y
                 dt = 0.50
-                speed = math.sqrt(dx ** 2 + dy ** 2) * 0.4
+                speed = math.sqrt(dx ** 2 + dy ** 2) * 0.4 * Facteur_vitesse[indice]
                 angle = math.degrees(math.atan2(-dy, dx))
                 time = 0
                 L_points.clear()
-                for i in range(15):
+                for i in range(Nb_points_trajectoire_map[indice]):
                     velocity_x = speed * math.cos(math.radians(angle))
                     velocity_y = speed * math.sin(math.radians(angle)) - gravity * time
                     point_x += velocity_x * dt
